@@ -3,7 +3,7 @@ const wdio = require('webdriverio');
 const { readFileSync, mkdirSync } = require('fs');
 
 
-const targetIOSSDKVerdion = '16.4';
+const targetIOSSDKVerdion = '16.2';
 const targetIPhoneName = 'iPhone SE (3rd generation)';
 
 
