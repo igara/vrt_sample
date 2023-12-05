@@ -1,0 +1,15 @@
+node_modules
+
+storybook-static
+__screenshots_before__
+__screenshots_after__
+__screenshots_diff__
+vrt_report.html
+reg.json
+
+appium.log
+__ios_screenshots__
+__ios_screenshots_before__
+__ios_screenshots_after__
+__ios_screenshots_diff__
+vrt_ios_report.html

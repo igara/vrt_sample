@@ -1,0 +1,55 @@
+name: frontend_vrt
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: '比較したいブランチを入力してください'
+        required: true
+        default: 'main'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: git fetch origin ${{ github.event.inputs.branch }} --depth=1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.10.0
+          cache: 'npm'
+
+      - name: VRT
+        run: |
+          AFTER_BRANCH_NAME=$(git branch --show-current)
+          sudo apt install fonts-noto
+          git switch ${{ github.event.inputs.branch }}
+          npm ci
+          npm run build-storybook
+          npm run snapshot:before
+          git fetch origin $AFTER_BRANCH_NAME --depth=1
+          git switch $AFTER_BRANCH_NAME
+          rm -rf node_modules storybook-static
+          npm ci
+          npm run build-storybook
+          npm run snapshot:after
+          npm run vrt
+        continue-on-error: true
+      - uses: actions/upload-artifact@v3
+        with:
+          name: vrt-report
+          path: |
+            ./__screenshots_before__
+            ./__screenshots_after__
+            ./__screenshots_diff__
+            ./vrt_report.html
+          retention-days: 10
