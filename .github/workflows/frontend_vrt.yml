@@ -21,7 +21,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: git fetch origin ${{ github.event.inputs.branch }} --depth=1
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
@@ -32,12 +33,12 @@ jobs:
         run: |
           AFTER_BRANCH_NAME=$(git branch --show-current)
           sudo apt install fonts-noto
-          git checkout ${{ github.event.inputs.branch }}
+          git switch ${{ github.event.inputs.branch }}
           npm ci
           npm run build-storybook
           npm run snapshot:before
           git fetch origin $AFTER_BRANCH_NAME --depth=1
-          git checkout $AFTER_BRANCH_NAME
+          git switch $AFTER_BRANCH_NAME
           rm -rf node_modules storybook-static
           npm ci
           npm run build-storybook
