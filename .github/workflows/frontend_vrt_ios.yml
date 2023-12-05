@@ -2,10 +2,14 @@ name: frontend_vrt_ios
 on:
   workflow_dispatch:
     inputs:
-      branch:
-        description: '比較したいブランチを入力してください'
+      BEFORE_REF:
+        description: 'BEFORE_REF'
         required: true
         default: 'main'
+      AFTER_REF:
+          description: 'AFTER_REF'
+          required: true
+          default: 'main'
 
 jobs:
   check:
@@ -31,8 +35,7 @@ jobs:
 
       - name: VRT
         run: |
-          AFTER_BRANCH_NAME=$(git branch --show-current)
-          git checkout ${{ github.event.inputs.branch }}
+          git checkout ${{ github.event.inputs.BEFORE_REF }}
           npm ci
           npm run storybook &
           npm run appium:server &
@@ -42,8 +45,7 @@ jobs:
           kill -9 `pgrep -f 'storybook' `
           kill -9 `pgrep -f 'appium' `
 
-          git fetch origin $AFTER_BRANCH_NAME --depth=1
-          git checkout $AFTER_BRANCH_NAME
+          git checkout  ${{ github.event.inputs.AFTER_REF }}
           rm -rf node_modules storybook-static
           npm ci
           npm run storybook &
