@@ -31,7 +31,7 @@ jobs:
       - name: VRT
         run: |
           AFTER_BRANCH_NAME=$(git branch --show-current)
-          git switch ${{ github.event.inputs.branch }}
+          git checkout ${{ github.event.inputs.branch }}
           npm ci
           npm run storybook &
           npm run appium:server &
@@ -42,7 +42,7 @@ jobs:
           kill -9 `pgrep -f 'appium' `
 
           git fetch origin $AFTER_BRANCH_NAME --depth=1
-          git switch $AFTER_BRANCH_NAME
+          git checkout $AFTER_BRANCH_NAME
           rm -rf node_modules storybook-static
           npm ci
           npm run storybook &
