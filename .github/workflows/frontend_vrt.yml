@@ -33,12 +33,12 @@ jobs:
         run: |
           AFTER_BRANCH_NAME=$(git branch --show-current)
           sudo apt install fonts-noto
-          git switch ${{ github.event.inputs.branch }}
+          git checkout ${{ github.event.inputs.branch }}
           npm ci
           npm run build-storybook
           npm run snapshot:before
           git fetch origin $AFTER_BRANCH_NAME --depth=1
-          git switch $AFTER_BRANCH_NAME
+          git checkout $AFTER_BRANCH_NAME
           rm -rf node_modules storybook-static
           npm ci
           npm run build-storybook
